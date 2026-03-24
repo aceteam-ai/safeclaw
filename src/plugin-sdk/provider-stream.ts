@@ -165,6 +165,7 @@ export const TOOL_STREAM_DEFAULT_ON_HOOKS =
 
 // Public stream-wrapper helpers for provider plugins.
 
+export { createAepHeadersWrapper } from "../agents/pi-embedded-runner/aep-stream-wrapper.js";
 export {
   createAnthropicToolPayloadCompatibilityWrapper,
   createOpenAIAnthropicToolPayloadCompatibilityWrapper,
