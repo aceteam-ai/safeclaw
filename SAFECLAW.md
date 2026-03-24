@@ -49,14 +49,14 @@ aceteam-aep proxy --port 8899
 
 ## What Gets Blocked?
 
-| Threat | Example | AEP Action |
-|--------|---------|------------|
-| **Port scanning** | `socket.connect()` on localhost | BLOCK (HTTP 400) |
-| **Subprocess execution** | `subprocess.run()` exploit payloads | BLOCK |
-| **Credential access** | Reading `/etc/passwd` or `/etc/shadow` | BLOCK |
-| **PII in responses** | SSN, credit card numbers in LLM output | BLOCK |
-| **Cost anomalies** | 5x average cost spike | FLAG |
-| **Normal calls** | Regular agent tasks | PASS (receipt recorded) |
+| Threat                   | Example                                | AEP Action              |
+| ------------------------ | -------------------------------------- | ----------------------- |
+| **Port scanning**        | `socket.connect()` on localhost        | BLOCK (HTTP 400)        |
+| **Subprocess execution** | `subprocess.run()` exploit payloads    | BLOCK                   |
+| **Credential access**    | Reading `/etc/passwd` or `/etc/shadow` | BLOCK                   |
+| **PII in responses**     | SSN, credit card numbers in LLM output | BLOCK                   |
+| **Cost anomalies**       | 5x average cost spike                  | FLAG                    |
+| **Normal calls**         | Regular agent tasks                    | PASS (receipt recorded) |
 
 Blocked calls never reach the LLM. $0 cost. The agent receives an error, not the dangerous response.
 
@@ -68,7 +68,7 @@ Open **http://localhost:8899/aep/** while your agent runs:
 - Safety status: green (PASS), yellow (FLAG), red (BLOCK)
 - Every LLM call with model, tokens, duration
 - Safety signals: PII detected, threats blocked, anomalies flagged
-- Governance context (if using X-AEP-* headers)
+- Governance context (if using X-AEP-\* headers)
 
 ## How It Works
 
