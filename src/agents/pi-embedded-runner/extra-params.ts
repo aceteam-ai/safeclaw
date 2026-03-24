@@ -7,6 +7,7 @@ import {
   prepareProviderExtraParams as prepareProviderExtraParamsRuntime,
   wrapProviderStreamFn as wrapProviderStreamFnRuntime,
 } from "../../plugins/provider-runtime.js";
+import { createAepHeadersWrapper } from "./aep-stream-wrapper.js";
 import {
   createAnthropicBetaHeadersWrapper,
   createBedrockNoCacheWrapper,
@@ -250,6 +251,9 @@ export function applyExtraParamsToAgent(
     }
     agent.streamFn = createOpenAIAttributionHeadersWrapper(agent.streamFn);
   }
+
+  // AEP governance headers — applied to ALL providers when AEP env vars are set.
+  agent.streamFn = createAepHeadersWrapper(agent.streamFn);
 
   const wrappedStreamFn = createStreamFnWithExtraParams(
     agent.streamFn,
