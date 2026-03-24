@@ -13,6 +13,7 @@ import type { ProviderRuntimeModel } from "../../plugins/provider-runtime-model.
 import { legacyModelKey, modelKey } from "../model-selection-normalize.js";
 import { supportsGptParallelToolCallsPayload } from "../provider-api-families.js";
 import { resolveProviderRequestPolicyConfig } from "../provider-request-config.js";
+import { createAepHeadersWrapper } from "./aep-stream-wrapper.js";
 import { createGoogleThinkingPayloadWrapper } from "./google-stream-wrappers.js";
 import { log } from "./logger.js";
 import { createMinimaxThinkingDisabledWrapper } from "./minimax-stream-wrappers.js";
@@ -552,6 +553,11 @@ function applyPrePluginStreamWrappers(ctx: ApplyExtraParamsContext): void {
 function applyPostPluginStreamWrappers(
   ctx: ApplyExtraParamsContext & { providerWrapperHandled: boolean },
 ): void {
+  // SafeClaw addition: inject AEP governance headers on every outgoing stream.
+  // Applied first so any later wrapper sees the wrapped stream — early returns
+  // below skip subsequent wrappers but never undo this one.
+  ctx.agent.streamFn = createAepHeadersWrapper(ctx.agent.streamFn);
+
   ctx.agent.streamFn = createOpenRouterSystemCacheWrapper(ctx.agent.streamFn);
   ctx.agent.streamFn = createOpenAIStringContentWrapper(ctx.agent.streamFn);
 
