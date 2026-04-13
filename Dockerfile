@@ -171,6 +171,8 @@ COPY --from=runtime-assets --chown=node:node /app/${OPENCLAW_BUNDLED_PLUGIN_DIR}
 COPY --from=runtime-assets --chown=node:node /app/skills ./skills
 COPY --from=runtime-assets --chown=node:node /app/docs ./docs
 COPY --from=runtime-assets --chown=node:node /app/qa ./qa
+# AceTeam Railway: keep this COPY after upstream assets; startCommand passes base64 JSON as argv (see aceteam repo).
+COPY --chmod=755 --chown=node:node docker/aceteam-hosted-entrypoint.sh /app/aceteam-hosted-entrypoint.sh
 
 # Keep pnpm available in the runtime image for container-local workflows.
 # Use a shared Corepack home so the non-root `node` user does not need a
