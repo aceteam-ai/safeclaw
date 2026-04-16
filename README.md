@@ -54,7 +54,7 @@ docker run -p 8899:8899 ghcr.io/aceteam-ai/aep-proxy:latest
 podman run -p 8899:8899 ghcr.io/aceteam-ai/aep-proxy:latest
 ```
 
-Dashboard: **http://localhost:8899/aep/**
+Dashboard: **http://localhost:8899/dashboard/**
 API Keys: Configure in **Dashboard > Settings**
 
 ---
@@ -111,7 +111,7 @@ docker run -p 8899:8899 -e OPENAI_API_KEY=$OPENAI_API_KEY ghcr.io/aceteam-ai/aep
 podman run -p 8899:8899 -e OPENAI_API_KEY=$OPENAI_API_KEY ghcr.io/aceteam-ai/aep-proxy:latest
 ```
 
-Dashboard: **http://localhost:8899/aep/**
+Dashboard: **http://localhost:8899/dashboard/**
 
 That's it. Every LLM call is tracked. Every threat is blocked. Every verdict is signed.
 
@@ -183,7 +183,7 @@ One YAML file. Different industries, different rules, same enforcement engine.
 
 ## Dashboard
 
-Open **http://localhost:8899/aep/** while your agent runs:
+Open **http://localhost:8899/dashboard/** while your agent runs:
 
 - Real-time cost counter
 - PASS / FLAG / BLOCK badges per call

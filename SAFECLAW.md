@@ -28,7 +28,7 @@ cp .env.example .env
 docker compose -f docker-compose.yml -f docker-compose.safe.yml up
 ```
 
-Dashboard: **http://localhost:8899/aep/**
+Dashboard: **http://localhost:8899/dashboard/**
 
 ### Option 2: Wrap any existing OpenClaw install
 
@@ -62,7 +62,7 @@ Blocked calls never reach the LLM. $0 cost. The agent receives an error, not the
 
 ## What You See on the Dashboard
 
-Open **http://localhost:8899/aep/** while your agent runs:
+Open **http://localhost:8899/dashboard/** while your agent runs:
 
 - Real-time cost counter
 - Safety status: green (PASS), yellow (FLAG), red (BLOCK)
