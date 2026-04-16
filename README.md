@@ -9,7 +9,7 @@ SafeClaw puts OpenClaw in a container where it can't touch your local files, ema
 #### Linux / macOS
 
 ```bash
-curl -fsSL -H 'Cache-Control: no-cache' https://safeclaw.sh/install.sh | bash
+curl -fsSL https://safeclaw.sh/install.sh | bash
 ```
 
 #### Windows (PowerShell)
