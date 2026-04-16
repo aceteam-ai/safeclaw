@@ -1,10 +1,11 @@
 #!/usr/bin/env bash
 # SafeClaw Installer — https://safeclaw.sh
 #
-# Usage: curl -fsSL https://safeclaw.sh/install.sh | bash
+# Usage: curl -fsSL -H 'Cache-Control: no-cache' https://safeclaw.sh/install.sh | bash
 #
 # SafeClaw = OpenClaw + AEP safety proxy.
 # This script installs everything you need to run AI agents safely.
+# Safe to run multiple times — existing config is preserved.
 
 set -euo pipefail
 
@@ -168,16 +169,14 @@ case "$choice" in
         echo -e "  ${DIM}  [2/2] AEP safety proxy image${NC}"
         $CONTAINER_CMD pull ghcr.io/aceteam-ai/aep-proxy:latest 2>&1 | tail -3
 
-        # Download compose files if not already in a clone
-        if [ ! -f "$SAFECLAW_DIR/docker-compose.yml" ]; then
-            echo -e "  ${DIM}  Downloading compose files...${NC}"
-            curl -fsSL "https://raw.githubusercontent.com/aceteam-ai/safeclaw/main/docker-compose.yml" \
-                -o "$SAFECLAW_DIR/docker-compose.yml"
-            curl -fsSL "https://raw.githubusercontent.com/aceteam-ai/safeclaw/main/docker-compose.safe.yml" \
-                -o "$SAFECLAW_DIR/docker-compose.safe.yml"
-            curl -fsSL "https://raw.githubusercontent.com/aceteam-ai/safeclaw/main/.env.example" \
-                -o "$SAFECLAW_DIR/.env.example" 2>/dev/null || true
-        fi
+        # Always download/update compose files (idempotent)
+        echo -e "  ${DIM}  Downloading compose files...${NC}"
+        curl -fsSL -H 'Cache-Control: no-cache' "https://raw.githubusercontent.com/aceteam-ai/safeclaw/main/docker-compose.yml" \
+            -o "$SAFECLAW_DIR/docker-compose.yml"
+        curl -fsSL -H 'Cache-Control: no-cache' "https://raw.githubusercontent.com/aceteam-ai/safeclaw/main/docker-compose.safe.yml" \
+            -o "$SAFECLAW_DIR/docker-compose.safe.yml"
+        curl -fsSL -H 'Cache-Control: no-cache' "https://raw.githubusercontent.com/aceteam-ai/safeclaw/main/.env.example" \
+            -o "$SAFECLAW_DIR/.env.example" 2>/dev/null || true
 
         # Create .env if missing
         if [ ! -f "$SAFECLAW_DIR/.env" ]; then
