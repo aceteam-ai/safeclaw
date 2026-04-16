@@ -21,6 +21,16 @@ This repo is a GitHub fork of `openclaw/openclaw`. We keep our SafeClaw commits 
 | `origin` | `git@github.com:aceteam-ai/safeclaw.git` | Our fork |
 | `upstream` | `git@github.com:openclaw/openclaw.git` | OpenClaw source |
 
+### PRs and `gh` Commands
+
+**Because this is a fork, `gh pr create` defaults to the upstream `openclaw/openclaw` repo.** Always use `--repo aceteam-ai/safeclaw` explicitly for SafeClaw-specific PRs:
+
+```bash
+gh pr create --repo aceteam-ai/safeclaw --title "..." --body "..."
+```
+
+Only omit `--repo` when intentionally opening a PR against upstream OpenClaw (core AEP integration PRs).
+
 ### Syncing with Upstream
 
 ```bash
