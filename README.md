@@ -1,6 +1,63 @@
 # SafeClaw — Run OpenClaw Safely
 
-> **OpenClaw is powerful. It has access to your email, your files, your credentials. SafeClaw puts it in a container where it can't touch any of that — and blocks dangerous actions before they execute.**
+SafeClaw puts OpenClaw in a container where it can't touch your local files, email, or credentials — and blocks dangerous actions before they execute.
+
+## Installation
+
+### One-Line Installer (Recommended)
+
+#### Linux / macOS
+
+```bash
+curl -fsSL https://safeclaw.sh/install.sh | bash
+```
+
+#### Windows (PowerShell)
+
+```powershell
+iwr -useb https://safeclaw.sh/install.ps1 | iex
+```
+
+### Manual Installation (Container)
+
+If you prefer to run the containers manually:
+
+```bash
+# Pull the latest SafeClaw Agent image
+docker pull ghcr.io/aceteam-ai/safeclaw:9ca8671
+
+# Pull the AEP Safety Proxy image
+docker pull ghcr.io/aceteam-ai/aep-proxy:latest
+```
+
+## Quick Start (Complete Safe Stack)
+
+The easiest way to run the full SafeClaw agent with automatic safety enforcement is using Docker Compose:
+
+```bash
+# Docker 
+docker compose -f docker-compose.yml -f docker-compose.safe.yml up
+
+# Podman
+podman-compose -f docker-compose.yml -f docker-compose.safe.yml up
+```
+
+## Running the Safety Proxy Alone
+
+If you already have an agent (OpenClaw, NemoClaw, etc.) and just want to add the safety layer:
+
+```bash
+# Docker
+docker run -p 8899:8899 ghcr.io/aceteam-ai/aep-proxy:latest
+
+# Podman
+podman run -p 8899:8899 ghcr.io/aceteam-ai/aep-proxy:latest
+```
+
+Dashboard: **http://localhost:8899/aep/**
+API Keys: Configure in **Dashboard > Settings**
+
+---
 
 ## The Problem
 
@@ -30,11 +87,28 @@ Your laptop (safe)          Docker container (sandboxed)
 
 The agent runs inside a Docker container. It **cannot** access your files, email, browser cookies, or credentials. The only thing exposed is port 8899 — the safety dashboard.
 
-## Quick Start
+## Quick Start (Complete Safe Stack)
+
+The easiest way to run the full SafeClaw agent with automatic safety enforcement is using Docker Compose:
 
 ```bash
-# One command. No Node. No Python. Just Docker.
-docker run -p 8899:8899 -e OPENAI_API_KEY=$OPENAI_API_KEY ghcr.io/aceteam-ai/aep-proxy
+# Docker 
+docker compose -f docker-compose.yml -f docker-compose.safe.yml up
+
+# Podman
+podman-compose -f docker-compose.yml -f docker-compose.safe.yml up
+```
+
+## Running the Safety Proxy Alone
+
+If you already have an agent (OpenClaw, NemoClaw, etc.) and just want to add the safety layer:
+
+```bash
+# Docker
+docker run -p 8899:8899 -e OPENAI_API_KEY=$OPENAI_API_KEY ghcr.io/aceteam-ai/aep-proxy:latest
+
+# Podman
+podman run -p 8899:8899 -e OPENAI_API_KEY=$OPENAI_API_KEY ghcr.io/aceteam-ai/aep-proxy:latest
 ```
 
 Dashboard: **http://localhost:8899/aep/**
@@ -77,9 +151,8 @@ aceteam-aep keygen
 
 # Run with signed verdicts
 docker run -p 8899:8899 \
-  -e OPENAI_API_KEY=$OPENAI_API_KEY \
   -v ./aep.key:/app/aep.key:ro \
-  ghcr.io/aceteam-ai/aep-proxy \
+  ghcr.io/aceteam-ai/aep-proxy:latest \
   proxy --port 8899 --host 0.0.0.0 --sign-key /app/aep.key
 ```
 
@@ -130,10 +203,14 @@ Open **http://localhost:8899/aep/** while your agent runs:
 
 ## Install Options
 
-**Docker (recommended — sandboxed, no file access):**
+**Docker / Podman (recommended — sandboxed, no file access):**
 
 ```bash
-docker run -p 8899:8899 -e OPENAI_API_KEY=$OPENAI_API_KEY ghcr.io/aceteam-ai/aep-proxy
+# Docker
+docker run -p 8899:8899 ghcr.io/aceteam-ai/aep-proxy:latest
+
+# Podman
+podman run -p 8899:8899 ghcr.io/aceteam-ai/aep-proxy:latest
 ```
 
 **pip (developer mode — runs on host):**
