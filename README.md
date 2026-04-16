@@ -240,4 +240,21 @@ aceteam-aep wrap -- python my_agent.py
 
 ---
 
+## Partner offer
+
+<p align="center">
+  <a href="https://palebluedot.ai/"><strong>Pale Blue Dot</strong></a>
+  &nbsp;&times;&nbsp;
+  <a href="https://aceteam.ai"><img src="https://safeclaw.sh/images/aceteam-logo.svg" alt="AceTeam" width="20" valign="middle"> <strong>AceTeam</strong></a>
+</p>
+
+[palebluedot.ai](https://palebluedot.ai/) (makers of **TokenRouter**) is partnered with us. Get **$200 in AceTeam credits** — **50 vouchers** available.
+
+**To claim:**
+1. Sign up at [aceteam.ai](https://aceteam.ai)
+2. [Star this repo](https://github.com/aceteam-ai/safeclaw)
+3. [DM Jason on LinkedIn](https://www.linkedin.com/in/sunapi386/) — mention TokenRouter
+
+---
+
 _OpenClaw gives agents power. SafeClaw makes them accountable._
