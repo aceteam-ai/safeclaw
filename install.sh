@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # SafeClaw Installer — https://safeclaw.sh
 #
-# Usage: curl -fsSL -H 'Cache-Control: no-cache' https://safeclaw.sh/install.sh | bash
+# Usage: curl -fsSL https://safeclaw.sh/install.sh | bash
 #
 # SafeClaw = OpenClaw + AEP safety proxy.
 # This script installs everything you need to run AI agents safely.
@@ -105,7 +105,7 @@ install_container_runtime() {
 # ---------------------------------------------------------------------------
 # Interactive preference selector
 # ---------------------------------------------------------------------------
-if [ -t 0 ]; then
+if [ -t 1 ]; then
     echo -e "  ${BOLD}What is SafeClaw?${NC}"
     echo -e "  ${DIM}SafeClaw = OpenClaw (AI agent platform) + AEP (safety proxy).${NC}"
     echo -e "  ${DIM}The agent runs in a container. The proxy blocks dangerous actions,${NC}"
@@ -125,7 +125,7 @@ if [ -t 0 ]; then
     echo -e "  ${CYAN}[4]${NC} ${BOLD}I already have it installed${NC}"
     echo ""
     printf "  Choice [1]: "
-    read -r choice
+    read -r choice </dev/tty
     choice=${choice:-1}
 else
     # Non-interactive (piped) — default to full SafeClaw if container available, else proxy
@@ -140,10 +140,10 @@ case "$choice" in
     1)
         # Full SafeClaw: OpenClaw + AEP proxy
         if [ -z "$CONTAINER_CMD" ]; then
-            if [ -t 0 ]; then
+            if [ -t 1 ]; then
                 echo ""
                 printf "  Container runtime required. Install one now? [Y/n]: "
-                read -r yn
+                read -r yn </dev/tty
                 yn=${yn:-Y}
                 if [[ "$yn" =~ ^[Yy] ]]; then
                     install_container_runtime
@@ -171,11 +171,11 @@ case "$choice" in
 
         # Always download/update compose files (idempotent)
         echo -e "  ${DIM}  Downloading compose files...${NC}"
-        curl -fsSL -H 'Cache-Control: no-cache' "https://raw.githubusercontent.com/aceteam-ai/safeclaw/main/docker-compose.yml" \
+        curl -fsSL "https://raw.githubusercontent.com/aceteam-ai/safeclaw/main/docker-compose.yml" \
             -o "$SAFECLAW_DIR/docker-compose.yml"
-        curl -fsSL -H 'Cache-Control: no-cache' "https://raw.githubusercontent.com/aceteam-ai/safeclaw/main/docker-compose.safe.yml" \
+        curl -fsSL "https://raw.githubusercontent.com/aceteam-ai/safeclaw/main/docker-compose.safe.yml" \
             -o "$SAFECLAW_DIR/docker-compose.safe.yml"
-        curl -fsSL -H 'Cache-Control: no-cache' "https://raw.githubusercontent.com/aceteam-ai/safeclaw/main/.env.example" \
+        curl -fsSL "https://raw.githubusercontent.com/aceteam-ai/safeclaw/main/.env.example" \
             -o "$SAFECLAW_DIR/.env.example" 2>/dev/null || true
 
         # Create .env if missing
@@ -217,10 +217,10 @@ ENVEOF
     2)
         # Safety proxy only — for existing agents
         if [ -z "$CONTAINER_CMD" ]; then
-            if [ -t 0 ]; then
+            if [ -t 1 ]; then
                 echo ""
                 printf "  Container runtime required. Install one now? [Y/n]: "
-                read -r yn
+                read -r yn </dev/tty
                 yn=${yn:-Y}
                 if [[ "$yn" =~ ^[Yy] ]]; then
                     install_container_runtime
@@ -333,7 +333,7 @@ echo ""
 # ---------------------------------------------------------------------------
 # Workshop outro — QR codes + coupon prompt
 # ---------------------------------------------------------------------------
-if [ -t 0 ] && command -v qrencode &>/dev/null; then
+if [ -t 1 ] && command -v qrencode &>/dev/null; then
     echo -e "  ${BOLD}${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
     echo ""
     echo -e "  ${BOLD}Connect with me on LinkedIn${NC}        ${BOLD}Star SafeClaw on GitHub${NC}"
@@ -355,7 +355,7 @@ if [ -t 0 ] && command -v qrencode &>/dev/null; then
     echo ""
     echo -e "  ${BOLD}Reply ${GREEN}a${NC}${BOLD} to get a free SafeClaw hosted instance coupon!${NC}"
     echo ""
-elif [ -t 0 ]; then
+elif [ -t 1 ]; then
     echo -e "  ${BOLD}${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
     echo ""
     echo -e "  ${BOLD}Connect:${NC}  ${CYAN}linkedin.com/in/sunapi386${NC}"
