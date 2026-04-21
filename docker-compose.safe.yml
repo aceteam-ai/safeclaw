@@ -7,7 +7,7 @@
 #   cp .env.example .env  # add your API keys
 #   docker compose -f docker-compose.yml -f docker-compose.safe.yml up
 #
-# Dashboard: http://localhost:8899/aep/
+# Dashboard: http://localhost:8899/dashboard/
 # Every LLM call: cost tracked, safety enforced, PASS/FLAG/BLOCK decisions.
 
 services:
@@ -35,7 +35,7 @@ services:
           "CMD",
           "python",
           "-c",
-          "import urllib.request; urllib.request.urlopen('http://localhost:8899/aep/')",
+          "import urllib.request; urllib.request.urlopen('http://localhost:8899/dashboard/')",
         ]
       interval: 10s
       timeout: 5s
