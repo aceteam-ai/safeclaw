@@ -42,11 +42,20 @@ services:
       retries: 5
     restart: unless-stopped
 
-  # Override OpenClaw gateway to route LLM calls through AEP proxy
+  # Override OpenClaw gateway to route LLM calls through AEP proxy.
+  #
+  # The sentinel default for OPENAI_API_KEY / ANTHROPIC_API_KEY matters:
+  # OpenClaw refuses to dispatch LLM calls unless it has *some* key in env or
+  # auth-profiles.json. The AEP proxy (v0.9+) substitutes its own managed key
+  # before forwarding upstream, so the sentinel is a placeholder — never sent
+  # to OpenAI/Anthropic. Users who prefer direct BYOK just set the real key
+  # in .env; OpenClaw uses that verbatim and the proxy passes it through.
   openclaw-gateway:
     environment:
       OPENAI_BASE_URL: http://aep-proxy:8899/v1
       ANTHROPIC_BASE_URL: http://aep-proxy:8899/v1
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-aep-proxy-managed}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-aep-proxy-managed}
       AEP_ENTITY: ${AEP_ENTITY:-}
       AEP_CLASSIFICATION: ${AEP_CLASSIFICATION:-}
       AEP_TRACE_ID: ${AEP_TRACE_ID:-}
