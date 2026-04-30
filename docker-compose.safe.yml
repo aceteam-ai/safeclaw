@@ -29,6 +29,16 @@ services:
     environment:
       OPENAI_API_KEY: ${OPENAI_API_KEY:-}
       ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      # When set, the proxy auto-syncs openclaw.json from the AceTeam gateway's
+      # /v1/models on every act_* connect. Same host path that the
+      # openclaw-gateway service mounts as its config dir, so changes the
+      # proxy writes are visible to OpenClaw on its next restart.
+      AEP_OPENCLAW_CONFIG_PATH: /openclaw-config/openclaw.json
+    volumes:
+      # Bind-mount the OpenClaw config dir so the proxy can refresh
+      # openclaw.json. Same source path as openclaw-gateway's volume,
+      # different mount point inside this container.
+      - ${OPENCLAW_CONFIG_DIR:-${HOME:-/tmp}/.openclaw}:/openclaw-config:rw
     healthcheck:
       test:
         [
