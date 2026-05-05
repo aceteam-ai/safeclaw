@@ -175,6 +175,10 @@ case "$choice" in
             -o "$SAFECLAW_DIR/docker-compose.yml"
         curl -fsSL "https://raw.githubusercontent.com/aceteam-ai/safeclaw/main/docker-compose.safe.yml" \
             -o "$SAFECLAW_DIR/docker-compose.safe.yml"
+        # Podman-specific overlay (userns_mode: keep-id). Harmless to download for
+        # docker users — only included in the start command when CONTAINER_CMD=podman.
+        curl -fsSL "https://raw.githubusercontent.com/aceteam-ai/safeclaw/main/docker-compose.podman.yml" \
+            -o "$SAFECLAW_DIR/docker-compose.podman.yml" 2>/dev/null || true
         curl -fsSL "https://raw.githubusercontent.com/aceteam-ai/safeclaw/main/.env.example" \
             -o "$SAFECLAW_DIR/.env.example" 2>/dev/null || true
 
@@ -207,7 +211,13 @@ ENVEOF
         echo ""
         echo "    cd ~/safeclaw"
         echo "    # Add your API keys to .env first"
-        echo "    $CONTAINER_CMD compose -f docker-compose.yml -f docker-compose.safe.yml up"
+        if [ "$CONTAINER_CMD" = "podman" ]; then
+            # Rootless Podman: use the keep-id overlay so the openclaw-gateway's
+            # `node` uid (1001) maps to the host user instead of a high subuid.
+            echo "    $CONTAINER_CMD compose -f docker-compose.yml -f docker-compose.safe.yml -f docker-compose.podman.yml up"
+        else
+            echo "    $CONTAINER_CMD compose -f docker-compose.yml -f docker-compose.safe.yml up"
+        fi
         echo ""
         echo -e "  ${CYAN}Dashboard:${NC}       http://localhost:8899/aep/"
         echo -e "  ${CYAN}Agent UI:${NC}        http://localhost:18789/"
