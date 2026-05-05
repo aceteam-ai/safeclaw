@@ -30,6 +30,20 @@ docker compose -f docker-compose.yml -f docker-compose.safe.yml up
 
 Dashboard: **http://localhost:8899/dashboard/**
 
+### Option 1b: Podman (rootless — recommended over Docker on Linux)
+
+```bash
+podman-compose -f docker-compose.yml -f docker-compose.safe.yml -f docker-compose.podman.yml up
+```
+
+Why prefer Podman: rootless user namespaces map the container's uid 0 to your
+host user, so files the proxy writes to `~/safeclaw/config/openclaw.json`
+land owned by you — no `sudo` needed to edit them. The `docker-compose.podman.yml`
+overlay adds `userns_mode: keep-id` for the openclaw-gateway service so its
+`node` user (uid 1001) also maps cleanly to your host UID instead of a high
+subuid. The installer auto-detects Podman and prefers it over Docker when
+both are available.
+
 ### Option 2: Wrap any existing OpenClaw install
 
 ```bash

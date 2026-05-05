@@ -1,0 +1,27 @@
+# docker-compose.podman.yml
+#
+# Podman-specific overlay. Compose with docker-compose.yml + docker-compose.safe.yml
+# when running under rootless Podman:
+#
+#   podman-compose -f docker-compose.yml -f docker-compose.safe.yml -f docker-compose.podman.yml up
+#
+# Why a separate overlay: `userns_mode: "keep-id"` is Podman-specific and would
+# error under Docker (Docker only accepts `host`). Keeping it isolated lets
+# Docker users continue with the default 2-file compose chain.
+#
+# What keep-id does: maps the host user's UID into the container so files
+# written by the container's `node` user (uid 1001) land on the host owned
+# by the host user instead of a high subuid. Without this, ls -la on the
+# bind-mounted config/workspace dirs shows confusing owners like 100999.
+#
+# aep-proxy is intentionally NOT given keep-id. It runs as root inside the
+# container; under default rootless Podman the container's uid 0 already
+# maps to the host user, which is exactly what we want for openclaw.json
+# bind-mount writes.
+
+services:
+  openclaw-gateway:
+    userns_mode: "keep-id"
+
+  openclaw-cli:
+    userns_mode: "keep-id"
