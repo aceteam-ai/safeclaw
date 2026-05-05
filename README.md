@@ -35,11 +35,11 @@ docker pull ghcr.io/aceteam-ai/aep-proxy:latest
 The easiest way to run the full SafeClaw agent with automatic safety enforcement is using Docker Compose:
 
 ```bash
-# Docker 
+# Docker
 docker compose -f docker-compose.yml -f docker-compose.safe.yml up
 
-# Podman
-podman-compose -f docker-compose.yml -f docker-compose.safe.yml up
+# Podman (rootless — adds keep-id overlay so files land owned by your host user)
+podman-compose -f docker-compose.yml -f docker-compose.safe.yml -f docker-compose.podman.yml up
 ```
 
 ## Running the Safety Proxy Alone
@@ -92,11 +92,11 @@ The agent runs inside a Docker container. It **cannot** access your files, email
 The easiest way to run the full SafeClaw agent with automatic safety enforcement is using Docker Compose:
 
 ```bash
-# Docker 
+# Docker
 docker compose -f docker-compose.yml -f docker-compose.safe.yml up
 
-# Podman
-podman-compose -f docker-compose.yml -f docker-compose.safe.yml up
+# Podman (rootless — adds keep-id overlay so files land owned by your host user)
+podman-compose -f docker-compose.yml -f docker-compose.safe.yml -f docker-compose.podman.yml up
 ```
 
 ## Running the Safety Proxy Alone
@@ -251,6 +251,7 @@ aceteam-aep wrap -- python my_agent.py
 [palebluedot.ai](https://palebluedot.ai/) (makers of **TokenRouter**) is partnered with us. Get **$200 in AceTeam credits** — **50 vouchers** available.
 
 **To claim:**
+
 1. Sign up at [aceteam.ai](https://aceteam.ai)
 2. [Star this repo](https://github.com/aceteam-ai/safeclaw)
 3. [DM Jason on LinkedIn](https://www.linkedin.com/in/sunapi386/) — mention TokenRouter

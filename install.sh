@@ -34,6 +34,28 @@ elif command -v docker &>/dev/null && docker info &>/dev/null; then
 fi
 
 # ---------------------------------------------------------------------------
+# Resolve the compose command. Docker has `docker compose` (v2 plugin) or
+# `docker-compose` (v1, deprecated). Podman has `podman compose` (built-in
+# on 4.x+ when the plugin is present) or `podman-compose` (separate Python
+# package, more widely installed). Pick whichever responds to --version so
+# the printed `Start SafeClaw` hint actually works on the user's machine.
+# ---------------------------------------------------------------------------
+detect_compose_cmd() {
+    local runtime="$1"
+    if [ -z "$runtime" ]; then
+        return
+    fi
+    if "$runtime" compose version &>/dev/null; then
+        echo "$runtime compose"
+    elif command -v "${runtime}-compose" &>/dev/null; then
+        echo "${runtime}-compose"
+    else
+        echo "$runtime compose"  # last resort — let the user see the failure
+    fi
+}
+COMPOSE_CMD="$(detect_compose_cmd "$CONTAINER_CMD")"
+
+# ---------------------------------------------------------------------------
 # Auto-install Docker/Podman if missing
 # ---------------------------------------------------------------------------
 install_container_runtime() {
@@ -63,18 +85,21 @@ install_container_runtime() {
             fi
             ;;
         Linux)
+            # Pull podman + podman-compose together. The base `podman` package
+            # alone doesn't include a compose CLI on most distros, and the
+            # printed `Start SafeClaw` hint relies on having one available.
             if command -v apt-get &>/dev/null; then
                 echo -e "  ${CYAN}Installing Podman via apt...${NC}"
-                sudo apt-get update -qq && sudo apt-get install -y -qq podman
+                sudo apt-get update -qq && sudo apt-get install -y -qq podman podman-compose
             elif command -v dnf &>/dev/null; then
                 echo -e "  ${CYAN}Installing Podman via dnf...${NC}"
-                sudo dnf install -y podman
+                sudo dnf install -y podman podman-compose
             elif command -v pacman &>/dev/null; then
                 echo -e "  ${CYAN}Installing Podman via pacman...${NC}"
-                sudo pacman -S --noconfirm podman
+                sudo pacman -S --noconfirm podman podman-compose
             elif command -v zypper &>/dev/null; then
                 echo -e "  ${CYAN}Installing Podman via zypper...${NC}"
-                sudo zypper install -y podman
+                sudo zypper install -y podman podman-compose
             else
                 echo -e "  ${RED}Could not detect package manager.${NC}"
                 echo "  Install Podman: https://podman.io/docs/installation"
@@ -92,6 +117,7 @@ install_container_runtime() {
                 echo "  Try: sudo systemctl start podman"
                 exit 1
             fi
+            COMPOSE_CMD="$(detect_compose_cmd "$CONTAINER_CMD")"
             echo -e "  ${GREEN}Installed ${CONTAINER_CMD}.${NC}"
             ;;
         *)
@@ -214,9 +240,9 @@ ENVEOF
         if [ "$CONTAINER_CMD" = "podman" ]; then
             # Rootless Podman: use the keep-id overlay so the openclaw-gateway's
             # `node` uid (1001) maps to the host user instead of a high subuid.
-            echo "    $CONTAINER_CMD compose -f docker-compose.yml -f docker-compose.safe.yml -f docker-compose.podman.yml up"
+            echo "    $COMPOSE_CMD -f docker-compose.yml -f docker-compose.safe.yml -f docker-compose.podman.yml up"
         else
-            echo "    $CONTAINER_CMD compose -f docker-compose.yml -f docker-compose.safe.yml up"
+            echo "    $COMPOSE_CMD -f docker-compose.yml -f docker-compose.safe.yml up"
         fi
         echo ""
         echo -e "  ${CYAN}Dashboard:${NC}       http://localhost:8899/aep/"
